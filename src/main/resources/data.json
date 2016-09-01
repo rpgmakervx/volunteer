@@ -1,0 +1,23 @@
+{
+  "interface":"/user/login",
+  "input":[
+    {
+      "paramname":"username",
+      "paramtype":"String"
+    },
+    {
+      "paramname":"password",
+      "paramtype":"String"
+    }
+  ],
+  "output":[
+    {
+      "paramname":"message",
+      "paramtype":"String"
+    },
+    {
+      "paramname":"code",
+      "paramtype":"Integer"
+    }
+  ]
+}
