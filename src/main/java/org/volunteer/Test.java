@@ -126,4 +126,8 @@ public class Test {
         FileGen.compilePlugins();
 //        response(ctx, HttpResponseStatus.OK,"success".getBytes());
     }
+
+    public void gamble(){
+        //1.随机从奖池中抽取，抽取到25元，则标记 变量level 5次 index=0 index++  add 50 to List
+    }
 }

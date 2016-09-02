@@ -6,10 +6,14 @@ package org.volunteer.server;/**
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import org.volunteer.configuration.Config;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.BaseHttpServerChildHandler;
@@ -23,44 +27,81 @@ import org.volunteer.listener.JarWatcher;
 
 public class HttpServer {
 
-    public HttpServer(String path) {
+    private ChannelFuture f = null;
+    private ServerBootstrap b;
+    private EventLoopGroup bossGroup ;
+    private EventLoopGroup workerGroup;
+    private ServerBootstrap bootstrap;
+    private int port;
+    private BaseHttpServerChildHandler handler;
+    private JarWatcher watcher = new JarWatcher();
+
+    private static HttpServer httpServer;
+    private HttpServer(String path) {
         if (Const.DEFAULT_CONFIGPATH.equals(path)){
             new Config(Config.class.getResourceAsStream(path));
         }else{
             new Config(path);
         }
+    }
 
+    public synchronized static HttpServer getInstance(String path){
+        if (httpServer == null)
+            return new HttpServer(path);
+        else
+            return httpServer;
+    }
+
+    public synchronized static HttpServer getInstance(){
+        return httpServer;
     }
 
     public void startup(){
-        launch(Config.getInt(Const.LISTEN));
+        port = Config.getInt(Const.LISTEN);
     }
 
     public void startup(int port){
-        launch(port);
+        this.port = port;
     }
 
-    private void launch(int port) {
+    private void launch() {
         System.out.println("正在启动服务。。。,服务端口:" + port);
-        JarWatcher watcher = new JarWatcher();
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        ServerBootstrap b = new ServerBootstrap();
-        ChannelFuture f = null;
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+        b = new ServerBootstrap();
         try {
-            b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                    .childHandler(new BaseHttpServerChildHandler())
-                    .option(ChannelOption.SO_BACKLOG, 512)
-                    .option(ChannelOption.TCP_NODELAY,true);
-            f = b.bind(port).sync();
-            System.out.println("服务已启动");
-            watcher.watchJarFolder();
-            f.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
+            setup();
+            close();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    private void setup(){
+        b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .childHandler(new BaseHttpServerChildHandler())
+                .option(ChannelOption.SO_BACKLOG, 512)
+                .option(ChannelOption.TCP_NODELAY,true);
+    }
+
+    public void initHandler(){
+        handler.addHandler(HttpRequestDecoder.class);
+        handler.addHandler(HttpResponseEncoder.class);
+        handler.addHandler(HttpObjectAggregator.class);
+        handler.addHandler(BaseHttpServerChildHandler.class);
+    }
+
+    public void addHandler(ChannelInboundHandler handler){
+        this.handler.addHandler(handler.getClass());
+    }
+
+    private void close() throws Exception {
+        f = b.bind(port).sync();
+        System.out.println("服务已启动");
+        watcher.watchJarFolder();
+        f.channel().closeFuture().sync();
     }
 }

@@ -9,9 +9,9 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.gen.FileGen;
-import org.volunteer.handler.http.param.ParamGetter;
 import org.volunteer.util.JSONUtil;
 
 import java.util.ArrayList;
@@ -32,19 +32,21 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Map<String, Object> param = ParamGetter.getRequestParams(msg);
+        HttpContent content = (HttpContent) msg;
+        String message = content.content().toString(CharsetUtil.UTF_8);
+        Map<String,Object> param = JSONUtil.strToMap(message);
         List<Map<String,Object>> inputParam = new ArrayList<>();
         List<Map<String,Object>> outputParam = new ArrayList<>();
         String input = getString(INPUT);
-        System.out.println("input:"+input);
+//        System.out.println("input:"+input);
         String output = getString(OUTPUT);
-        System.out.println("output:" + output);
+//        System.out.println("output:"+output);
         for (Map.Entry<String,Object> entry:param.entrySet()){
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof List){
                 List<Map<String,Object>> params = (List<Map<String, Object>>) entry.getValue();
-                System.out.println("key:"+key);
+//                System.out.println("key:"+key);
                 if (key.equals(input)){
                     inputParam.addAll(params);
                 }else if (key.equals(output)){
@@ -67,7 +69,7 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
                 "import static org.volunteer.constant.Const.*;\n" +
                 "import java.util.HashMap;\n" +
                 "import java.util.Map;\n");
-        buffer.append("public class "+Const.DEFAULT_CLASSNAME+FileGen.counter.get()+" extends ChannelInboundHandlerAdapter {\n");
+        buffer.append("public class "+Const.SIMPLE_CLASSNAME+FileGen.counter.get()+" extends ChannelInboundHandlerAdapter {\n");
         buffer.append("\t@Override\n\tpublic void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {\n");
         buffer.append("\t\tMap<String, Object> param = ParamGetter.getRequestParams(msg);\n");
         buffer.append("\t\tHttpRequest request = (HttpRequest) msg;\n");
@@ -75,13 +77,13 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
         buffer.append("\t\tif (!request.uri().equals(interfaces)){ctx.fireChannelRead(request);return;}\n");
         /*service*/
         for(Map<String, Object> map:inputParam){
-            System.out.println("adding input param");
+//            System.out.println("adding input param");
             buffer.append("\t\t" + map.get(PARAMTYPE) + " " + map.get(PARAMNAME) + "=(" + map.get(PARAMTYPE) + ")param.get(\"" + map.get(PARAMNAME) + "\");\n");
         }
         buffer.append("\t\tMap<String,Object> result = new HashMap<String,Object>();\n");
         buffer.append("\t\tValueGen valueGen = new ValueGen();\n");
         for (Map<String,Object> map:outputParam){
-            System.out.println("adding output param");
+//            System.out.println("adding output param");
             String type = (String) map.get(getString(PARAMTYPE));
             String name = (String) map.get(getString(PARAMNAME));
             buffer.append("\t\tresult.put(\"" + name + "\",valueGen.getValue(" + type + ".class));\n");
