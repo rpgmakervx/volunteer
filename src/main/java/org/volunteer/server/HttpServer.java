@@ -11,9 +11,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import org.volunteer.configuration.Config;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.BaseHttpServerChildHandler;
@@ -38,6 +35,7 @@ public class HttpServer {
 
     private static HttpServer httpServer;
     private HttpServer(String path) {
+        handler = new BaseHttpServerChildHandler();
         if (Const.DEFAULT_CONFIGPATH.equals(path)){
             new Config(Config.class.getResourceAsStream(path));
         }else{
@@ -46,10 +44,10 @@ public class HttpServer {
     }
 
     public synchronized static HttpServer getInstance(String path){
-        if (httpServer == null)
-            return new HttpServer(path);
-        else
-            return httpServer;
+        if (httpServer == null){
+            httpServer = new HttpServer(path);
+        }
+        return httpServer;
     }
 
     public synchronized static HttpServer getInstance(){
@@ -58,10 +56,12 @@ public class HttpServer {
 
     public void startup(){
         port = Config.getInt(Const.LISTEN);
+        launch();
     }
 
     public void startup(int port){
         this.port = port;
+        launch();
     }
 
     private void launch() {
@@ -70,6 +70,7 @@ public class HttpServer {
         workerGroup = new NioEventLoopGroup();
         b = new ServerBootstrap();
         try {
+            initHandler();
             setup();
             close();
         } catch (Exception e) {
@@ -82,20 +83,20 @@ public class HttpServer {
 
     private void setup(){
         b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new BaseHttpServerChildHandler())
+                .childHandler(handler)
                 .option(ChannelOption.SO_BACKLOG, 512)
                 .option(ChannelOption.TCP_NODELAY,true);
     }
 
     public void initHandler(){
-        handler.addHandler(HttpRequestDecoder.class);
-        handler.addHandler(HttpResponseEncoder.class);
-        handler.addHandler(HttpObjectAggregator.class);
-        handler.addHandler(BaseHttpServerChildHandler.class);
+//        handler.addHandler(HttpRequestDecoder.class);
+//        handler.addHandler(HttpResponseEncoder.class);
+//        handler.addHandler(HttpObjectAggregator.class);
+//        handler.addHandler(BaseHttpServerChildHandler.class);
     }
 
     public void addHandler(ChannelInboundHandler handler){
-        this.handler.addHandler(handler.getClass());
+        this.handler.addHandler(handler);
     }
 
     private void close() throws Exception {

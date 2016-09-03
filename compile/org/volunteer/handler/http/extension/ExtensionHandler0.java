@@ -17,6 +17,7 @@ public class ExtensionHandler0 extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		Map<String, Object> param = ParamGetter.getRequestParams(msg);
 		HttpRequest request = (HttpRequest) msg;
+		System.out.println("plugin uri :"+request.uri());
 		String interfaces = (String) param.get(Config.getString(INTERFACE));
 		if (!request.uri().equals(interfaces)){ctx.fireChannelRead(request);return;}
 		String username=(String)param.get("username");

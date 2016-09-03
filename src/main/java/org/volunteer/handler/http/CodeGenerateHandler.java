@@ -32,8 +32,15 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        HttpContent content = (HttpContent) msg;
-        String message = content.content().toString(CharsetUtil.UTF_8);
+        FullHttpRequest request = (FullHttpRequest)msg;
+        String uri = request.uri();
+        System.out.println("CodeGenerateHandler");
+        if (!uri.equals("/test")){
+            ctx.fireChannelRead(request);
+            return;
+        }
+        String message = request.content().toString(CharsetUtil.UTF_8);
+        System.out.println("content: "+message);
         Map<String,Object> param = JSONUtil.strToMap(message);
         List<Map<String,Object>> inputParam = new ArrayList<>();
         List<Map<String,Object>> outputParam = new ArrayList<>();
@@ -73,6 +80,7 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
         buffer.append("\t@Override\n\tpublic void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {\n");
         buffer.append("\t\tMap<String, Object> param = ParamGetter.getRequestParams(msg);\n");
         buffer.append("\t\tHttpRequest request = (HttpRequest) msg;\n");
+        buffer.append("\t\tSystem.out.println(\"plugin uri :\"+request.uri());\n");
         buffer.append("\t\tString interfaces = (String) param.get(Config.getString(INTERFACE));\n");
         buffer.append("\t\tif (!request.uri().equals(interfaces)){ctx.fireChannelRead(request);return;}\n");
         /*service*/
@@ -103,6 +111,7 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         Map<String,String> result = new HashMap<>();
         result.put("msg","error");
         result.put("code","500");
