@@ -26,9 +26,13 @@ public class Const {
     public static final String COMPILE_FILE = DIR+"compile"+File.separator+"org"+File.separator+"volunteer"+
             File.separator+"handler"+File.separator+"http"+File.separator+"extension"+File.separator;
     public static final String COMPILE_PATH = DIR+"compile"+File.separator;
+    public static final String LISTEN_PATH = DIR+"listen"+File.separator;
+    public static final String TEMPLATE_PATH = DIR+"template"+File.separator;
+
     public static final String COMPILE_LIB = DIR+"compile"+File.separator+"libs"+File.separator;
     public static final String DEFAULT_CLASSNAME = "org.volunteer.handler.http.extension.ExtensionHandler";
     public static final String SIMPLE_CLASSNAME = "ExtensionHandler";
+    public static final String TEMPLATE_NAME = "Template.ftl";
 
 
     public static final String DEFAULT_DIR = "default_dir";
@@ -43,6 +47,7 @@ public class Const {
     public static final String PARAMNAME = "paramname";
     public static final String PARAMTYPE = "paramtype";
     public static final String INTERFACE = "interface";
+    public static final String CLASSNAME = "classname";
 
 
     public static final String TEXT = "text/plain";

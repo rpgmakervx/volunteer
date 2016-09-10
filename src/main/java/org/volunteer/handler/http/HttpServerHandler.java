@@ -11,6 +11,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.resource.Resource;
+import org.volunteer.loader.ClassPool;
 
 /**
  * Description :
@@ -25,6 +26,7 @@ public class HttpServerHandler extends ChannelInboundHandlerAdapter {
         HttpRequest request = (HttpRequest) msg;
         String uri = request.uri();
         System.out.println("uri:"+uri);
+        System.out.println("HttpServerHandler  --> "+ ClassPool.getPlugins().length);
 //        Pattern pattern = Pattern.compile(Config.getString(Const.PATH));
 //        Matcher matcher = pattern.matcher(uri);
 //        if (!matcher.matches()){

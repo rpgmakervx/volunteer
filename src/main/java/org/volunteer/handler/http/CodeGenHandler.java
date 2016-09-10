@@ -7,11 +7,14 @@ package org.volunteer.handler.http;/**
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.gen.FileGen;
+import org.volunteer.loader.ClassPool;
+import org.volunteer.loader.ExtensionLoader;
 import org.volunteer.util.JSONUtil;
 
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ import static org.volunteer.constant.Const.*;
  * 上午1:42
  */
 
-public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
+public class CodeGenHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -44,6 +47,7 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
         Map<String,Object> param = JSONUtil.strToMap(message);
         List<Map<String,Object>> inputParam = new ArrayList<>();
         List<Map<String,Object>> outputParam = new ArrayList<>();
+        String interfaces = (String) param.get(getString(INTERFACE));
         String input = getString(INPUT);
 //        System.out.println("input:"+input);
         String output = getString(OUTPUT);
@@ -80,13 +84,12 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
         buffer.append("\t@Override\n\tpublic void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {\n");
         buffer.append("\t\tMap<String, Object> param = ParamGetter.getRequestParams(msg);\n");
         buffer.append("\t\tHttpRequest request = (HttpRequest) msg;\n");
-        buffer.append("\t\tSystem.out.println(\"plugin uri :\"+request.uri());\n");
-        buffer.append("\t\tString interfaces = (String) param.get(Config.getString(INTERFACE));\n");
-        buffer.append("\t\tif (!request.uri().equals(interfaces)){ctx.fireChannelRead(request);return;}\n");
+        buffer.append("\t\tSystem.out.println(\"plugin uri :\"+request.uri()+\", param uri:"+interfaces+"\");\n");
+        buffer.append("\t\tif (!request.uri().equals(\""+interfaces+"\")){ctx.fireChannelRead(request);return;}\n");
         /*service*/
         for(Map<String, Object> map:inputParam){
 //            System.out.println("adding input param");
-            buffer.append("\t\t" + map.get(PARAMTYPE) + " " + map.get(PARAMNAME) + "=(" + map.get(PARAMTYPE) + ")param.get(\"" + map.get(PARAMNAME) + "\");\n");
+            buffer.append("\t\t" + map.get(getString(PARAMTYPE)) + " " + map.get(getString(PARAMNAME)) + "=(" + map.get(getString(PARAMTYPE)) + ")param.get(\"" + map.get(PARAMNAME) + "\");\n");
         }
         buffer.append("\t\tMap<String,Object> result = new HashMap<String,Object>();\n");
         buffer.append("\t\tValueGen valueGen = new ValueGen();\n");
@@ -102,11 +105,20 @@ public class CodeGenerateHandler extends ChannelInboundHandlerAdapter {
         buffer.append("\t\tFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,HttpResponseStatus.OK, byteBuf);\n");
         buffer.append("\t\tresponse.headers().set(HttpHeaderNames.CONTENT_TYPE, Const.JSON);\n");
         buffer.append("\t\tctx.channel().writeAndFlush(response);\n");
-        buffer.append("\t\t;\n");
+        buffer.append("\t}\n");
+        buffer.append("\t@Override\n");
+        buffer.append("\tpublic void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {\n");
+        buffer.append("\t\tcause.printStackTrace();\n");
         buffer.append("\t}\n");
         buffer.append("}\n");
-        FileGen.genFile(buffer.toString());
+//        FileGen.genFile(buffer.toString());
         FileGen.compilePlugins();
+        ExtensionLoader loader = new ExtensionLoader(Const.COMPILE_PATH);
+        ChannelInboundHandler handler = loader.loadPlugin("org.volunteer.handler.http.extension."+Const.SIMPLE_CLASSNAME+FileGen.counter.get());
+        ClassPool.addPlugin(handler.getClass());
+        System.out.println("PluginName: "+handler.getClass().getName());
+        FileGen.nextFile();
+        response(ctx,HttpResponseStatus.OK,"ok".getBytes());
     }
 
     @Override

@@ -5,7 +5,6 @@ import net.contentobjects.jnotify.JNotifyAdapter;
 import org.apache.log4j.Logger;
 import org.volunteer.constant.Const;
 import org.volunteer.loader.ExtensionLoader;
-import org.volunteer.server.HttpServer;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +33,7 @@ public class Listener extends JNotifyAdapter {
             System.out.println("plugin name:"+"org.volunteer.handler.http.extension."+classname);
             ExtensionLoader loader = new ExtensionLoader(Const.COMPILE_PATH);
             ChannelInboundHandler handler = loader.loadPlugin("org.volunteer.handler.http.extension."+classname);
-            HttpServer.getInstance().addHandler(handler);
+//            HttpServer.getInstance().addHandler(handler);
             System.out.println("PluginName: "+handler.getClass().getName());
         }
 //        Executors.newCachedThreadPool()

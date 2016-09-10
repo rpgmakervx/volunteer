@@ -48,6 +48,10 @@ public class ExtensionHandler extends ChannelInboundHandlerAdapter {
                 outputParam.addAll(params);
             }
         }
+
+        System.out.println("plugin uri :"+request.uri()+", param uri:"+interfaces);
+        if (!request.uri().equals(interfaces)){ctx.fireChannelRead(request);return;}
+
         for (Map<String,Object> map:outputParam){
             String type = (String) map.get(getString(PARAMTYPE));
             ValueGen valueGen = new ValueGen();

@@ -5,10 +5,10 @@ package org.volunteer.handler.http.gen;/**
  */
 
 import org.volunteer.constant.Const;
+import org.volunteer.template.CodeTemplate;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,23 +21,12 @@ public class FileGen {
 
     public static AtomicInteger counter = new AtomicInteger(0);
 
-    public static void genFile(String content){
-        String filename = Const.COMPILE_FILE+Const.SIMPLE_CLASSNAME+counter.get()+".java";
-        File file = new File(filename);
-        File folder = new File(Const.COMPILE_LIB);
-        try {
-            if (!file.exists()){
-                file.createNewFile();
-            }
-            FileWriter writer = new FileWriter(file);
-            writer.write(content);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void genFile(CodeTemplate template,Map<String,Object> param){
+        String classname = Const.COMPILE_FILE+Const.SIMPLE_CLASSNAME+counter.get()+".java";
+        template.makeTemplate(param,classname);
     }
 
-    private static void nextFile(){
+    public static void nextFile(){
         counter.getAndIncrement();
     }
 
@@ -59,11 +48,11 @@ public class FileGen {
         }
         System.out.println("javac -cp "+buffer.toString()+" "+filename);
         try {
-            Runtime.getRuntime().exec("javac -cp "+buffer.toString()+" "+filename);
+            Process process = Runtime.getRuntime().exec("javac -cp "+buffer.toString()+" "+filename);
+            process.waitFor();
 //            Runtime.getRuntime().exec("javac -cp "+buffer.toString()+" "+filename);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        nextFile();
     }
 }

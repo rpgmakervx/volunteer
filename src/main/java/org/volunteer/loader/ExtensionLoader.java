@@ -29,6 +29,8 @@ public class ExtensionLoader {
             urls = new URL[]{new URL("file://"+this.pluginPath)};
             URLClassLoader classLoader = new URLClassLoader(urls);
             System.out.println(urls[0].toString());
+            System.out.println(classname);
+//            Thread.sleep(2000);
             Class<? extends ChannelInboundHandlerAdapter> clazz =
                     (Class<? extends ChannelInboundHandlerAdapter>) classLoader.loadClass(classname);
             System.out.println("生成新的class");

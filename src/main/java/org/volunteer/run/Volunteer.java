@@ -16,7 +16,7 @@ import org.volunteer.server.HttpServer;
 public class Volunteer {
 
     public static void main(String[] args) {
-        HttpServer server = HttpServer.getInstance(Const.DEFAULT_CONFIGPATH);
+        HttpServer server = new HttpServer(Const.DEFAULT_CONFIGPATH);
         server.startup();
     }
 }

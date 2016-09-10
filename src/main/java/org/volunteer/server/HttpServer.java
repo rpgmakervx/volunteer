@@ -6,7 +6,6 @@ package org.volunteer.server;/**
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,7 +13,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.volunteer.configuration.Config;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.BaseHttpServerChildHandler;
-import org.volunteer.listener.JarWatcher;
 
 /**
  * Description :
@@ -31,27 +29,15 @@ public class HttpServer {
     private ServerBootstrap bootstrap;
     private int port;
     private BaseHttpServerChildHandler handler;
-    private JarWatcher watcher = new JarWatcher();
+//    private JarWatcher watcher = new JarWatcher();
 
-    private static HttpServer httpServer;
-    private HttpServer(String path) {
+    public HttpServer(String path) {
         handler = new BaseHttpServerChildHandler();
         if (Const.DEFAULT_CONFIGPATH.equals(path)){
             new Config(Config.class.getResourceAsStream(path));
         }else{
             new Config(path);
         }
-    }
-
-    public synchronized static HttpServer getInstance(String path){
-        if (httpServer == null){
-            httpServer = new HttpServer(path);
-        }
-        return httpServer;
-    }
-
-    public synchronized static HttpServer getInstance(){
-        return httpServer;
     }
 
     public void startup(){
@@ -70,8 +56,10 @@ public class HttpServer {
         workerGroup = new NioEventLoopGroup();
         b = new ServerBootstrap();
         try {
-            initHandler();
-            setup();
+            b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                    .childHandler(new BaseHttpServerChildHandler())
+                    .option(ChannelOption.SO_BACKLOG, 512)
+                    .option(ChannelOption.TCP_NODELAY, true);
             close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,28 +69,10 @@ public class HttpServer {
         }
     }
 
-    private void setup(){
-        b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(handler)
-                .option(ChannelOption.SO_BACKLOG, 512)
-                .option(ChannelOption.TCP_NODELAY,true);
-    }
-
-    public void initHandler(){
-//        handler.addHandler(HttpRequestDecoder.class);
-//        handler.addHandler(HttpResponseEncoder.class);
-//        handler.addHandler(HttpObjectAggregator.class);
-//        handler.addHandler(BaseHttpServerChildHandler.class);
-    }
-
-    public void addHandler(ChannelInboundHandler handler){
-        this.handler.addHandler(handler);
-    }
-
     private void close() throws Exception {
         f = b.bind(port).sync();
         System.out.println("服务已启动");
-        watcher.watchJarFolder();
+//        watcher.watchJarFolder();
         f.channel().closeFuture().sync();
     }
 }

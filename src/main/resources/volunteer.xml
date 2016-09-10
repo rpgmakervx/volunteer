@@ -4,7 +4,7 @@
     <!--lb_strategy range:roundrobin,weight_roundrobin,ip_hash,less_connection-->
     <server listen="9524" localhost="10.42.0.1"/>
     <resource default_dir="/default" notfound_page="404page.html" error_page="error.html" forbidden_page="forbidden.html"/>
-    <root path="/test/.*"/>
+    <root path="/test"/>
     <params input="input" output="output" interface="interface"
             paramname="paramname" paramtype="paramtype"/>
 </proxy>

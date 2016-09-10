@@ -4,10 +4,10 @@ package org.volunteer;/**
  *  下午4:28
  */
 
+import io.netty.channel.ChannelHandler;
 import org.volunteer.configuration.Config;
 import org.volunteer.constant.Const;
 import org.volunteer.handler.http.gen.FileGen;
-import org.volunteer.listener.JarWatcher;
 import org.volunteer.util.JSONUtil;
 
 import java.io.BufferedReader;
@@ -32,18 +32,20 @@ public class Test {
 //        System.out.println(System.getProperty("java.library.path"));
 //        System.out.println(COMPILE_LIB+"libjnotify.so");
 //        System.load(COMPILE_LIB+"libjnotify.so");
-        final JarWatcher watcher = new JarWatcher();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                watcher.watchJarFolder();
-            }
-        }).start();
-        Test test = new Test();
-        test.compile();
+//        final JarWatcher watcher = new JarWatcher();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                watcher.watchJarFolder();
+//            }
+//        }).start();
+//        Test test = new Test();
+//        test.compile();
 //        ExtensionLoader loader = new ExtensionLoader(COMPILE_PATH);
 //        ChannelInboundHandler handler = loader.loadPlugin("org.volunteer.handler.http.extension.ExtensionHandler00");
 //        System.out.println(handler.getClass().getName());
+        ChannelHandler[]array = new ChannelHandler[0];
+        System.out.println(array);
     }
 
     public void compile() throws IOException {
@@ -122,12 +124,14 @@ public class Test {
         buffer.append("\t\t;\n");
         buffer.append("\t}\n");
         buffer.append("}\n");
-        FileGen.genFile(buffer.toString());
+//        FileGen.genFile(buffer.toString());
         FileGen.compilePlugins();
 //        response(ctx, HttpResponseStatus.OK,"success".getBytes());
     }
 
     public void gamble(){
         //1.随机从奖池中抽取，抽取到25元，则标记 变量level 5次 index=0 index++  add 50 to List
+        ChannelHandler[]array = new ChannelHandler[0];
+        System.out.println(array);
     }
 }

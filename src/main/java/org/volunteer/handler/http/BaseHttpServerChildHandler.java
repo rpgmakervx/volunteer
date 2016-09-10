@@ -9,9 +9,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.volunteer.loader.ClassPool;
 
 /**
  * Description :
@@ -21,38 +19,44 @@ import java.util.List;
 
 public class BaseHttpServerChildHandler extends ChannelInitializer<SocketChannel> {
 
-    private List<ChannelHandler> handlers;
-    public BaseHttpServerChildHandler(){
-        handlers = new ArrayList<>();
-        handlers.add(new HttpRequestDecoder());
-        handlers.add(new HttpResponseEncoder());
-        handlers.add(new HttpContentCompressor(9));
-        handlers.add(new HttpContentDecompressor());
-        handlers.add(new HttpObjectAggregator(1024000));
-        handlers.add(new CodeGenerateHandler());
-        handlers.add(new HttpServerHandler());
-    }
-    public void addHandler(ChannelHandler handler){
-        if (!handlers.contains(handler)){
-            handlers.remove(handlers.size()-1);
-            handlers.add(handler);
-            handlers.add(new HttpServerHandler());
-        }
-    }
+//    public void init(){
+//        handlers.clear();
+//    }
+//    public void addHandler(ChannelHandler handler){
+//        if (!handlers.contains(handler)){
+//            handlers.remove(handlers.size()-1);
+//            handlers.add(handler);
+//            handlers.add(new HttpServerHandler());
+//        }
+//    }
     @Override
     protected synchronized void initChannel(SocketChannel sc) throws Exception {
         ChannelPipeline pipeline = sc.pipeline();
+//        handlers.add(new HttpRequestDecoder());
+//        handlers.add(new HttpResponseEncoder());
+//        handlers.add(new HttpContentCompressor(9));
+//        handlers.add(new HttpContentDecompressor());
+//        handlers.add(new HttpObjectAggregator(1024000));
+//        handlers.add(new CodeGenerateHandler());
+//        handlers.add(new HttpServerHandler());
 
-        for (ChannelHandler handler:handlers){
-            pipeline.addLast(handler);
+        pipeline.addLast("decoder", new HttpRequestDecoder());
+        pipeline.addLast("encoder", new HttpResponseEncoder());
+        pipeline.addLast("compress", new HttpContentCompressor(9));
+        pipeline.addLast("decompress", new HttpContentDecompressor());
+        pipeline.addLast("aggregator", new HttpObjectAggregator(1024000));
+        pipeline.addLast(new TemplateGenHandler());
+//        pipeline.addLast(null);
+        Class<? extends ChannelHandler>[] array = ClassPool.getPlugins();
+        System.out.println("plugin size : "+array.length);
+        if (array.length != 0){
+            for (Class<? extends ChannelHandler> clazz:array){
+                ChannelHandler handler = clazz.newInstance();
+                System.out.println("handler name --> "+handler.getClass().getName());
+                pipeline.addLast(handler);
+            }
         }
-//        pipeline.addLast("decoder", new HttpRequestDecoder());
-//        pipeline.addLast("encoder", new HttpResponseEncoder());
-//        pipeline.addLast("compress", new HttpContentCompressor(9));
-//        pipeline.addLast("decompress", new HttpContentDecompressor());
-//        pipeline.addLast("aggregator", new HttpObjectAggregator(1024000));
-//        pipeline.addLast(new CodeGenerateHandler());
-//        pipeline.addLast(new HttpServerHandler());
+        pipeline.addLast(new HttpServerHandler());
 //        for (Class<? extends ChannelHandler> clazz:handlers){
 //            System.out.println("handler: "+clazz.getSimpleName());
 //            if (clazz == HttpObjectAggregator.class){

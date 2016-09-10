@@ -15,6 +15,7 @@ import java.util.Random;
 public class ValueGen {
 
     private static final String BASE_CHAR = "a0Ab1Bc2Cd3De4Ef5Fg6Gh7Hi8Ij9Jk!Kl@Lm#Mn$No%Op^Pq&Qr*Rs(St)Tu_Uv+Vw\\Wx|Xy.Yz<Z >";
+
     private String getRandomString(int length) { //length表示生成字符串的长度
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
