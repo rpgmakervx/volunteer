@@ -23,7 +23,7 @@ import org.volunteer.handler.http.BaseHttpServerChildHandler;
 public class HttpServer {
 
     private ChannelFuture f = null;
-    private ServerBootstrap b;
+    public static ServerBootstrap b;
     private EventLoopGroup bossGroup ;
     private EventLoopGroup workerGroup;
     private ServerBootstrap bootstrap;

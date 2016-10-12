@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>阿里西西_Web开发之家_alixixi.com</title>
+</head>
+<body>
+
+<div id="d"><input type="text" name="text_0" value="变量" /></div>
+<input type="button" id="b" value="添加"/>
+</body>
+<script language="javascript">
+    i = 1;
+    document.getElementById("b").onclick=function(){
+        document.getElementById("d").innerHTML+= '<div id="div_'+i+'">' + '<input name="text" name="text_'+i+'" type="text" value="变量"  />' + '<input type="button" value="删除"  onclick="del('+i+')"/></div>';
+        i = i + 1;
+    }
+    function del(o){
+        document.getElementById("d").removeChild(document.getElementById("div_"+o));
+    }
+</script>
+</html>

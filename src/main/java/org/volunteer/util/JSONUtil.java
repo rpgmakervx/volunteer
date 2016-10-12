@@ -27,6 +27,7 @@ public class JSONUtil {
     public static Map<String, Object> strToMap(String json) {
         JSONObject jsonObject = JSON.parseObject(json);
         Map<String, Object> params = new HashMap<String, Object>();
+        System.out.println("strToMap:"+json);
         for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
             params.put(entry.getKey(), entry.getValue());
         }
@@ -43,6 +44,8 @@ public class JSONUtil {
 
     public static boolean isJson(String string) {
         try {
+            if (string==null||string.isEmpty())
+                return false;
             JSON.parseObject(string);
             return true;
         } catch (Exception e) {

@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+	<head>
+		<title>About</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Play-Offs Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+		<script type="application/x-javascript"> addEventListener("load", function()
+		{setTimeout(hideURLbar, 0); }, false); function hideURLbar()
+		{ window.scrollTo(0,1); }
+		</script>
+		<!meta charset utf="8">
+		<!--flexslider-css-->
+		<link href="Easynet/css/flexslider.css" rel='stylesheet' type='text/css' />
+		<!--bootstrap-->
+		<link href="Easynet/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<!--coustom css-->
+		<link href="Easynet/css/style.css" rel="stylesheet" type="text/css"/>
+		<!--fonts-->
+		
+		<!--script-->
+		<script type="text/javascript" src="Easynet/js/move-top.js"></script>
+		<script type="text/javascript" src="Easynet/js/easing.js"></script>
+		<script src="Easynet/js/modernizr.custom.js"></script>
+		<script src="Easynet/js/jquery-2.1.4.min.js"></script>
+		<script src="Easynet/js/bootstrap.min.js"></script>
+		<!--script-->
+		<script type="text/javascript" src="Easynet/js/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				$('#submit2').click(function () {
+					var inter=$('#urlname').val();
+					var int1name=$('#intdata1name').val();
+					var int1=$('#indata').val();
+					var int2name=$('#intdata2name').val();
+					var int2=$('#indata2').val();
+                    var json = {};
+                    json[int1name] = int1;
+                    json[int2name] = int2;
+					var data=JSON.stringify(json)
+					if (inter!=""&& int1name!=""&& int1!=""&& int2name!=""&&int2!=""){
+						$.ajax({
+							url:"http://localhost:3000"+inter,
+							data:"",
+							datatype:"json",
+							method:"post",
+							contentType:"application/json",
+							success: function (result) {
+							}
+						    })
+						$.ajax({
+							url:"http://localhost:3000"+inter,
+							data:data,
+							datatype:"json",
+							method:"post",
+							contentType:"application/json",
+						   	success: function (result) {
+								alert(result)
+								$("#return").html("<div align='center'><strong>"+JSON.stringify(result)+"</strong></div>")
+							}
+						})
+					}else {
+						alert("请完善信息")
+					}
+
+				})
+				$('#submit1').click(function () {
+					var url1 = $("#url").val();
+					var param1 = $("#parma1").val();
+					var param2 = $("#param2").val();
+					var outparma1 = $("#outparam1").val();
+					var outparma2 = $("#outparam2").val();
+					var inttype1 = $("#type1").val();
+					var inttype2 = $("#type2").val();
+					var outtype1 = $("#type3").val();
+					var outtype2 = $("#type4").val();
+					if (url1 != "" && param1 != "" && param2 != "" && outparma1 != "" && outparma2 != ""
+							&& inttype1 != "" && inttype2 != "" && outtype1 != "" && outtype2 != "") {
+					var req = JSON.stringify({
+						"interface": url1,
+						"input": [
+							{
+								"paramname": param1,
+								"paramtype": inttype1
+							},
+							{
+								"paramname": param2,
+								"paramtype": inttype2
+							}
+						],
+						"output": [
+							{
+								"paramname": outparma1,
+								"paramtype": outtype1
+							},
+							{
+								"paramname": outparma2,
+								"paramtype": outtype2
+							}
+						]
+					});
+					$.ajax({
+						url: "http://localhost:3000/gen",
+						data: req,
+						dataType: "json",
+						method: "post",
+						contentType: "application/json",
+						success: function (result) {
+						    alert("接口生成完毕")
+						}
+					})
+				}else {
+					alert("请完善所填信息")
+				}
+				});
+			})
+
+		</script>
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$(".scroll").click(function(event){
+					event.preventDefault();
+					$('html,body').animate({scrollTop:$(this.hash).offset().top},900);
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$(".scroll").click(function(event){
+					event.preventDefault();
+					$('html,body').animate({scrollTop:$(this.hash).offset().top},900);
+				});
+			});
+		</script>
+		<!--fonts-->
+	</head>
+	<body>
+		<div class="header" id="home">
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="index.html">EasyMockUp</a>
+					</div>
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav navbar-right margin-top cl-effect-2">
+							<li><a href="index.html">
+								<span data-hover="Home">主页</span></a></li>
+							<li class="dropdown">
+								<a href="about.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+									<span data-hover="About">关于</span><span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="about.html"><span data-hover="Action">测试</span></a></li>
+									<li><a href="404.html"><span data-hover="Pages">Pages</span></a></li>
+								</ul>
+							</li>
+							<li><a href="404.html"><span data-hover="Blog">论坛</span></a></li>
+							<li><a href="gallery.html"><span data-hover="Gallery">产品展示</span></a></li>
+							<li><a href="Login.html"><span data-hover="login">登录</span></a></li>
+							<li><a href="contact.html"><span data-hover="Contact">联系我们</span></a></li>
+						</ul>
+						<div class="clearfix"></div>
+					</div><!-- /.navbar-collapse -->
+					<div class="clearfix"></div>
+				</div><!-- /.container-fluid -->
+			</nav>
+			<div class="about-page">
+			<div class="about">
+				<div class="container">
+					<div class="col-md-4 awrd">
+						<h4><div align="center">Define</div></h4>
+						<div class="col-md-8 cnt-pg design">
+							<table width=1200 style="height:400px " align=center>
+								<tr align="center">
+									<th width="20%" ><h4 align="center">接口名</h4></th>
+									<th align="center" width="35%" colspan="2">
+										<input type="text"  class="nuber1" id="url" placeholder="请输入您的接口名">
+									</th>
+									</th>
+									<th width="15%" ><h3 style="text-align: center ;font-size: 25px"align="center">测试接口名</h3></th>
+									<th align="center" width="50%" colspan="2">
+										<input type="text"  class="nuber12" id="urlname" placeholder="请输入您的接口名">
+									</th>
+								</tr>
+								<tr align=center>
+									<td><h4>变量名</h4></td>
+									<td width="15%">
+										<select class="selectcs" id="type1">
+											<option value="String" data-class="flag-france">String</option>
+											<option value="Integer" data-class="flag-brazil">Integer</option>
+											<option value="Float" data-class="flag-argentina">Float</option>
+											<option value="Character" data-class="flag-safrica"> Character</option>
+										</select>
+									</td>
+									<td>
+										<input type="text"  class="nuber1" id="parma1" placeholder="请输入您传递的变量名">
+									</td>
+									<th width="15%" ><h3 style="text-align: center ;font-size: 25px"align="center">测试变量名</h3>
+										<h3 align="center" style="text-align: center ;font-size: 25px" >变量值</h3>
+									</th>
+									<th align="center" width="35%" colspan="2">
+										<input type="text"  class="nuber12" id="intdata1name" placeholder="请输入您的变量名">
+
+										<input type="text"  class="nuber12" id="indata" placeholder="请输入变量值">
+									</th>
+								</tr>
+								<tr align=center>
+									<td><h4>变量名</h4></td>
+									<td ><select class="selectcs" id="type2">
+										<option value="String" data-class="flag-france">String</option>
+										<option value="Integer" data-class="flag-brazil">Integer</option>
+										<option value="Float" data-class="flag-argentina">Float</option>
+										<option value="Character" data-class="flag-safrica"> Character</option>
+									</select>
+									</td>
+									<td width="35%" >
+										<input type="text"  class="nuber1"  id="param2" placeholder="请输入您的变量名">
+									</td>
+									<th width="15%" ><h3 style="text-align: center ;font-size: 25px"align="center">测试变量</h3>
+										<h3 align="center" style="text-align: center ;font-size: 25px" >变量值</h3>
+									</th>
+									<th align="center" width="40%" colspan="2">
+										<input type="text"  class="nuber12" id="intdata2name" placeholder="请输入您的变量名">
+										<input type="text"  class="nuber12" id="indata2" placeholder="请输入变量值">
+									</th>
+								</tr>
+								<tr align=center>
+									<td><h4>返回参数名</h4></td>
+									<td><select class="selectcs" id="type3">
+										<option value="String" data-class="flag-france">String</option>
+										<option value="Integer" data-class="flag-brazil">Integer</option>
+										<option value="Float" data-class="flag-argentina">Float</option>
+										<option value="Character" data-class="flag-safrica"> Character</option>
+									</select>
+									</td>
+									<td>
+										<input type="text"  class="nuber1" id="outparam1" placeholder="请输入您返回的变量名">
+									</td>
+									<th  width="70%"  colspan="1">
+										<h4 style="text-align: center ;font-size: 25px" >返回结果</h4>
+										<input type="submit" class="btn1 btn-info1 "id="submit2"  value="提交">
+									</th>
+								</tr>
+								<tr align=center>
+									<td><h4>返回参数名</h4></td>
+									<td><select class="selectcs" id="type4">
+										<option value="String" data-class="flag-france">String</option>
+										<option value="Integer" data-class="flag-brazil">Integer</option>
+										<option value="Float" data-class="flag-argentina">Float</option>
+										<option value="Character" data-class="flag-safrica"> Character</option>
+									</select>
+									</td>
+									<td>
+										<input type="text"  class="nuber1" id="outparam2" placeholder="请输入您返回的变量名">
+									</td>
+									<td colspan="2" width="70%" id="return" style="border: solid;">
+										
+									</td>
+								</tr>
+							</table>
+							<div class="register-but">
+								<input type="submit" class="btn1 btn-info1 "id="submit1"  value="提交">
+								<div class="clearfix"> </div>
+							</div>
+
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<div class="col-md-8 wh-we">
+						<h4><div align="center">Design</div></h4>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="test-monials">
+				<h3>Testimonials</h3>
+				<div class="container">
+					<div class="col-md-6 txt1">
+						<h4>Lorem Ipsum has been the industry's standard dummy text since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen</h4>
+						<p>andrew wayne / <a href="#">demolink.org</a></p>
+					</div>
+					<div class="col-md-6 txt1">
+						<h4>Lorem Ipsum has been the industry's standard dummy text since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen</h4>
+						<p>eva green / <a href="#">demolink.org</a></p>
+					</div>
+					<div class="clearfix"></div>
+					<div class="col-md-6 txt1">
+						<h4>Lorem Ipsum has been the industry's standard dummy text since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen</h4>
+						<p>cody / <a href="#">demolink.org</a></p>
+					</div>
+					<div class="col-md-6 txt1">
+						<h4>Lorem Ipsum has been the industry's standard dummy text since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen</h4>
+						<p>cody / <a href="#">demolink.org</a></p>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+			</div>
+				<div class="footer">
+					<div class="container">
+					<script src="Easynet/js/classie.js"></script>
+					<script src="Easynet/js/selectFx.js"></script>
+				</div>
+			</div>
+			<a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+			<iframe href=""></iframe>
+			</div>
+
+	</body>
+</html>

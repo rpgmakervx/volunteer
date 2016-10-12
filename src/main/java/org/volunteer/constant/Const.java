@@ -21,7 +21,7 @@ public class Const {
     public static final String DEFAULT_CONFIGPATH = "/volunteer.xml";
 
 
-    public static final String DIR = System.getProperty("user.dir")+ File.separator;
+    public static final String DIR = System.getProperty("user.dir")+ File.separator+".."+File.separator;
     public static final String WEB_ROOT = DIR+"html"+File.separator;
     public static final String COMPILE_FILE = DIR+"compile"+File.separator+"org"+File.separator+"volunteer"+
             File.separator+"handler"+File.separator+"http"+File.separator+"extension"+File.separator;

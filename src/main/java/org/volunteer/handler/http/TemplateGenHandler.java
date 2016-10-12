@@ -42,6 +42,7 @@ public class TemplateGenHandler extends ChannelInboundHandlerAdapter {
         String uri = request.uri();
         Pattern pattern = Pattern.compile(getString(PATH));
         Matcher matcher = pattern.matcher(uri);
+        System.out.println("template handler "+BaseHttpServerChildHandler.pipeline.names());
         if (!matcher.matches()){
             ctx.fireChannelRead(request);
             return;
@@ -79,9 +80,12 @@ public class TemplateGenHandler extends ChannelInboundHandlerAdapter {
         ExtensionLoader loader = new ExtensionLoader(Const.COMPILE_PATH);
         ChannelInboundHandler handler = loader.loadPlugin("org.volunteer.handler.http.extension."+Const.SIMPLE_CLASSNAME+FileGen.counter.get());
         ClassPool.addPlugin(handler.getClass());
+        BaseHttpServerChildHandler.trigger();
+//        BaseHttpServerChildHandler.pipeline.flush();
+//        ctx.pipeline().addBefore("pagehandler","extension"+FileGen.counter.get(),handler);
         System.out.println("PluginName: "+handler.getClass().getName());
         FileGen.nextFile();
-        response(ctx,HttpResponseStatus.OK,"ok".getBytes());
+        response(ctx,HttpResponseStatus.OK,"{\"message\":\"200\"}".getBytes());
     }
 
     public void response(ChannelHandlerContext ctx,HttpResponseStatus status,byte[] bytes){
@@ -90,5 +94,6 @@ public class TemplateGenHandler extends ChannelInboundHandlerAdapter {
                 status, byteBuf);
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, Const.JSON);
         ctx.channel().writeAndFlush(response);
+        ctx.close();
     }
 }
